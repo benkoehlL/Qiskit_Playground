@@ -1,15 +1,18 @@
-'''This code creates the gates for all four Bell states and prints the LaTex code for the circuit '''
+'''
+This code creates the gates for all four Bell states 
+and prints the LaTex code for the circuit 
+'''
 from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
 import os
 import shutil
 
 use_classical_register = False
-LaTex_folder = str(os.getcwd())+'/Latex_quantum_gates/Bell_states/'
-if not os.path.exists(LaTex_folder):
-    os.makedirs(LaTex_folder)
+LaTex_folder_Bell_states = str(os.getcwd())+'/Latex_quantum_gates/Bell_states/'
+if not os.path.exists(LaTex_folder_Bell_states):
+    os.makedirs(LaTex_folder_Bell_states)
 else:
-    shutil.rmtree(LaTex_folder)
-    os.makedirs(LaTex_folder)
+    shutil.rmtree(LaTex_folder_Bell_states)
+    os.makedirs(LaTex_folder_Bell_states)
 
 for not0 in [False,True]:
     for not1 in [False,True]:
@@ -40,5 +43,5 @@ for not0 in [False,True]:
             f_name += '0'
         f_name += '.tex'
 
-        with open(LaTex_folder+f_name, 'w') as f:
+        with open(LaTex_folder_Bell_states+f_name, 'w') as f:
             f.write(LaTex_code)
