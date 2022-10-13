@@ -45,10 +45,11 @@ def Add_with_carry(qc, q0, q1, c):
     qc.ccx(q0, q1, c)
     qc.cx (q0, q1)
 
-def Half_Adder(qc, q0,q1,q2,c):
-    # This function carries out the addition with a carry bit
-    # It also measures the minor bit in the addition
-    qc.ccx(q0,q1,q2)
+def Half_Adder(qc, q0, q1, cq,c):
+    # This function carries out the addition with a carry bit cq
+    # It also measures the minor bit q0 in the addition
+    qc.reset(cq)
+    qc.ccx(q0,q1,cq)
     qc.cx(q1, q0)
     qc.measure(q0,c)
 
@@ -155,50 +156,58 @@ f_name = 'Half_Adder_gate_Beyond_Classical.tex'
 with open(LaTex_folder_Adder_gates+f_name, 'w') as f:
             f.write(LaTex_code)
 
-## Full Adder
-addend0 = '1' 
-addend1 = '1'
+## Full Adder for addition of a two-qubit |q1q2> and a one-qubit number |q3> 
+## with a carry qubit |cq> which is initialised to |0>  
+# iteration over all possible additions of |q1q2>+|q3>
+print('\n',"Full Adder Test (long version)")
+for qubit2_1 in qubit_space:
+    for qubit1_2 in qubit_space:
+        for qubit1_1 in qubit_space:
+            string_q1 = str(0)+str(qubit1_2)+str(qubit1_1)
+            string_q2 = str(qubit2_1)
+            q1  = QuantumRegister(3, name ='q1')
+            q2  = QuantumRegister(1, name = 'q2')
+            cq  = QuantumRegister(1, name = 'd')
+            c   = ClassicalRegister(3, name = 'c')
+            qc  = QuantumCircuit(q1,q2,cq,c)
 
-# ensure that the largest number is encoded in the first qubits 
-if(len(addend0)<len(addend1)):
-    help = addend0
-    addend0 = addend1
-    addend1 = help
+            for qubit in q1:
+                qc.reset(qubit)
+            for qubit in q2:
+                qc.reset(qubit)
 
-q  = QuantumRegister(len(addend0)+len(addend1)+1, name = 'q')
-c  = ClassicalRegister(len(addend0)+1, name = 'c')
-qc = QuantumCircuit(q,c)
+           
+            # initialise qubits which should be added
+            for i, qubit in enumerate(q1):
+                if(string_q1[i] == '1'):
+                    qc.x(qubit)
+                    print(1,end="")
+                else:
+                    print(0,end="")
+            print('\t',end="")
+            for i, qubit in enumerate(q2):
+                if(string_q2[i] == '1'):
+                    qc.x(qubit)
+                    print(1,end="")
+                else:
+                    print(0,end="")
+            print('\t',end="")
 
-# initialisation: qubit 1
-qc.reset(q[0])
-for i, s in enumerate(addend0):
-    if(s=='1'):
-        qc.x(q[i+1])
+            # determin and measure the least digit
+            Half_Adder(qc, q1[-1], q2[-1], cq, c[0])
+            qc.ccx(cq, q1[-2], q1[0])
+            qc.cx(cq, q1[-2])
+            
+            qc.measure(q1[-2], c[1])
+            qc.measure(q1[-3], c[2])
 
-# initialisation: qubit 2
-for i, s in enumerate(addend1):
-    if(s=='1'):
-        qc.x(q[i+1+len(addend0)])
-
-# add with carry bit by bit
-for i in range(len(addend1)):
-    print(len(addend0)+len(addend1)-i,'\t',len(addend0)-i,'\t',len(addend0)-1-i)
-    Add_with_carry( qc, 
-                    q[len(addend0)+len(addend1)-i], 
-                    q[len(addend0)-i],
-                    q[len(addend0)-1-i])
-
-# read result
-for i in range(len(addend0)+1):
-    qc.measure(q[i], c[i])
-
-#backend = Aer.get_backend('qasm_simulator')
-#job = execute(qc, backend, shots=1000)
-#results = job.result()
-#count = results.get_counts()
-#print(count)
-
-LaTex_code = qc.draw(output='latex_source', justify=None) # draw the circuit
-f_name = 'Full_Adder_gate_Benjamin.tex'
-with open(LaTex_folder_Adder_gates+f_name, 'w') as f:
-            f.write(LaTex_code)
+            backend = Aer.get_backend('qasm_simulator')
+            job = execute(qc, backend, shots=1000)
+            results = job.result()
+            count = results.get_counts()
+            print('|0', qubit1_2, qubit1_1, '>', '+', '|0', qubit2_1, '> = ', '\t', count)
+            LaTex_code = qc.draw(output='latex_source', justify=None) # draw the circuit
+            if(qubit1_1 == '0' and qubit1_2 == '0' and qubit2_1 == '0'):
+                f_name = 'Full_Adder_gate_Benjamin.tex'
+                with open(LaTex_folder_Adder_gates+f_name, 'w') as f:
+                            f.write(LaTex_code)
