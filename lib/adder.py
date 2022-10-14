@@ -1,12 +1,16 @@
-def Half_Adder(qc, q0, q1, qd):
-    # This function carries out the addition with a carry bit cq
-    # It also measures the minor bit q0 in the addition
-    qc.ccx(q0,q1,qd)
-    qc.cx(q1, q0)
+def Half_Adder(qc, q1, q2, qd):
+    # This function carries out the addition |q0> + |q1> 
+    # storing the minor bit in q2 with a carry bit qd
+    qc.ccx(q1,q2,qd)
+    qc.cx(q1, q2)
     
 
-def Full_Adder(qc, q1_0, q1_1, q1_2, q2_0, qd, c0):
-    # carries out the addition of |q1_2 q1_1 q1_0> + |0 q2_0> and measures the
-    Half_Adder(qc, q1_0, q2_0, qd)
-    qc.measure(q1_0,c0)
-    Half_Adder(qc, q1_1, qd, q1_2)
+def Full_Adder(qc, q1, q2, qd, q0, c0):
+    # carries out the addition of |q1> + |q2> + |qd> 
+    # it measures the minor bit and stores it in c0 
+    # and uses the bit |q0> (reset to |0> at the beginning) 
+    # to store the carry bit  
+    qc.reset(q0)
+    Half_Adder(qc, q1, q2, q0)
+    Half_Adder(qc, q2, qd, q0)
+    qc.measure(qd,c0)
