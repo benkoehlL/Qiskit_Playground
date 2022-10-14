@@ -306,3 +306,8 @@ job = execute(qc, backend, shots=10)
 results = job.result()
 count = results.get_counts()
 print(count)
+
+LaTex_code = qc.draw(output='latex_source') # draw the circuit
+f_name = 'Adder_gate_for_'+str(string_q1)+'_and_'+str(string_q2)+'.tex'
+with open(LaTex_folder_Adder_gates+f_name, 'w') as f:
+            f.write(LaTex_code)
