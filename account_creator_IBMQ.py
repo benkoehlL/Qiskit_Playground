@@ -7,6 +7,6 @@ and it lists all the versions of your qiskit installation.
 import qiskit 
 from qiskit import IBMQ
 
-IBMQ.save_account('YOUR_API_TOKEN')
+IBMQ.save_account('***********')
 IBMQ.load_account
 print(qiskit.__qiskit_version__)
