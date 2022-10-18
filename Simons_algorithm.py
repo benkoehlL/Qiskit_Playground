@@ -23,9 +23,9 @@ s = '10'
 s_len = len(str(s))
 
 # create quantum register which is double the size of the secret string
-qr = QuantumRegister(s_len)
-qr_ancilla = QuantumRegister(s_len)
-cr = ClassicalRegister(2*s_len)
+qr = QuantumRegister(s_len, 'q')
+qr_ancilla = QuantumRegister(s_len, 'qa')
+cr = ClassicalRegister(2*s_len, 'c')
 
 qc = QuantumCircuit(qr, qr_ancilla, cr)
 

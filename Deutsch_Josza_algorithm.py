@@ -1,4 +1,3 @@
-from turtle import back
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import plot, draw, show
@@ -10,7 +9,7 @@ from qiskit.transpiler import CouplingMap
 from qiskit.tools.monitor import job_monitor
 from qiskit.tools.visualization import plot_histogram
 
-LaTex_folder_Deutsch_Josza = str(os.getcwd())+'/Latex_quantum_gates/Berstein_Vazarani/'
+LaTex_folder_Deutsch_Josza = str(os.getcwd())+'/Latex_quantum_gates/Deutsch_Josza_algorithm/'
 if not os.path.exists(LaTex_folder_Deutsch_Josza):
     os.makedirs(LaTex_folder_Deutsch_Josza)
 else:
@@ -33,10 +32,10 @@ else:
 
 # Creating registers
 # n qubits for querying the oracle and one qubit forstoring the answer
-qr = QuantumRegister(n+1) #all qubits are initialised to |0>
+qr = QuantumRegister(n+1, 'q') #all qubits are initialised to |0>
 
 # for recording the measurement on the first register
-cr = ClassicalRegister(n)
+cr = ClassicalRegister(n, 'c')
 
 circuitName = "DeutschJosza"
 djCircuit = QuantumCircuit(qr, cr)
