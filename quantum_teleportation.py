@@ -7,8 +7,6 @@ from qiskit.visualization import plot_histogram
 import os, shutil
 from matplotlib.pyplot import plot, draw, show
 
-#%matplotlib inline
-
 LaTex_folder_Quantum_Teleportation = str(os.getcwd())+'/Latex_quantum_gates/Quantum_Teleportation/'
 if not os.path.exists(LaTex_folder_Quantum_Teleportation):
     os.makedirs(LaTex_folder_Quantum_Teleportation)
