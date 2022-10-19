@@ -13,15 +13,15 @@ else:
     os.makedirs(LaTex_folder_Error_Correction)
 
 def ERROR_X(circuit, q):
-    if(np.random.rand()<0.1):
+    if(np.random.rand()<1):
         circuit.x(q)
 
 def ERROR_Y(circuit, q):
-    if(np.random.rand()<0.1):
+    if(np.random.rand()<1):
         circuit.y(q)
 
 def ERROR_Z(circuit, q):
-    if(np.random.rand()<0.1):
+    if(np.random.rand()<1):
         circuit.z(q)
 
 def All_Errors(circuit, q):
@@ -98,8 +98,6 @@ def Shor_error_correction(Circuit_FUNC, qr, qr_Shor):
         #qc_postprocess.barrier()
     
     qc = QuantumCircuit.compose(qc, qc_postprocess)
-
-
     return qc
 
 ## X-Error
@@ -138,7 +136,7 @@ for qubit in [0, 1]:
     c = ClassicalRegister(len(q), 'c')
     qc = QuantumCircuit(q,q_Shor, c)
     if(qubit):
-        qc.h(q) # y error is detected in Hadamard basis
+        qc.x(q) # y error is detected in Hadamard basis
     qc_Shor = Shor_error_correction(ERROR_Y, q, q_Shor) 
     qc_Shor.barrier()
     qc_Shor = QuantumCircuit.compose(qc, qc_Shor)
