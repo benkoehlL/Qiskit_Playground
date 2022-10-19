@@ -13,19 +13,18 @@ else:
     os.makedirs(LaTex_folder_Error_Correction)
 
 def ERROR_X(circuit, q):
-    if(np.random.rand()<0.2):
+    if(np.random.rand()<0.1):
         circuit.x(q)
 
 def ERROR_Y(circuit, q):
-    if(np.random.rand()<0.2):
+    if(np.random.rand()<0.1):
         circuit.y(q)
 
 def ERROR_Z(circuit, q):
-    if(np.random.rand()<0.2):
+    if(np.random.rand()<0.1):
         circuit.z(q)
 
-def Error_CX_Gate(circuit, q):
-    circuit.cx(q[0],q[1])
+def All_Errors(circuit, q):
     ran = np.random.rand()
     if(ran < 1/3):
         ERROR_X(circuit, q[0])
@@ -41,6 +40,7 @@ def Error_CX_Gate(circuit, q):
         ERROR_Y(circuit, q[1])
     else:
         ERROR_Z(circuit, q[1])
+
     
 def Shor_error_correction(Circuit_FUNC, qr, qr_Shor):
     # This function creates the Shor error correction circuit
@@ -103,6 +103,7 @@ def Shor_error_correction(Circuit_FUNC, qr, qr_Shor):
     return qc
 
 ## X-Error
+print("X error")
 for qubit in [0, 1]:
     print("|",qubit,'> : ',end='')
     q = QuantumRegister(1,'q')
@@ -129,6 +130,7 @@ for qubit in [0, 1]:
     print(counts)
 
 ## Y-Error
+print("Y error")
 for qubit in [0, 1]:
     print("|",qubit,'> : ', end='')
     q = QuantumRegister(1,'q')
@@ -136,7 +138,7 @@ for qubit in [0, 1]:
     c = ClassicalRegister(len(q), 'c')
     qc = QuantumCircuit(q,q_Shor, c)
     if(qubit):
-        qc.x(q)
+        qc.h(q) # y error is detected in Hadamard basis
     qc_Shor = Shor_error_correction(ERROR_Y, q, q_Shor) 
     qc_Shor.barrier()
     qc_Shor = QuantumCircuit.compose(qc, qc_Shor)
@@ -155,6 +157,7 @@ for qubit in [0, 1]:
     print(counts)
 
 ## Z-Error
+print("Z error")
 for qubit in [0, 1]:
     print("|",qubit,'> : ',end='')
     q = QuantumRegister(1,'q')
@@ -180,7 +183,8 @@ for qubit in [0, 1]:
     counts = result.get_counts()
     print(counts)
 
-## All three errors possible in CX-gate
+## All three errors possible before CX-gate
+print("CX with all error types")
 for qubit1 in [0, 1]:
     for qubit2 in [0, 1]:
         print("|",qubit1,qubit2,'> : ',end='')
@@ -194,14 +198,16 @@ for qubit1 in [0, 1]:
         if(qubit2):
             qc.x(q[1])
         qc.barrier()
-        qc_Shor = Shor_error_correction(Error_CX_Gate, q, q_Shor)
+        qc_Shor = Shor_error_correction(All_Errors, q, q_Shor)
         qc_Shor.barrier()
 
-        qc_Shor = QuantumCircuit.compose(qc, qc_Shor)
-        qc_Shor.measure(q, c)
+        qc = QuantumCircuit.compose(qc, qc_Shor)
+        qc.cx(q[0],q[1])
+        for i, qubit in enumerate(reversed(q)):
+            qc.measure(qubit, c[i])
 
         # evaluate result
         simulator = Aer.get_backend('qasm_simulator')
-        result = execute(qc_Shor, backend=simulator, shots=1000).result()
+        result = execute(qc, backend=simulator, shots=1000).result()
         counts = result.get_counts()
         print(counts)
