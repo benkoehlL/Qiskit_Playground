@@ -119,7 +119,7 @@ acc = 0
 for bit in zip(alice_key, bob_key):
     if(bit[0]==bit[1]):
         acc += 1
-print('Percentage of qubits to be discarded according to table comparison: ',
+print('\n Percentage of qubits to be discarded according to table comparison: ',
         len(keep)/n)
 print('Measurement convergence by additional chance: ', acc/n)
 
@@ -137,8 +137,7 @@ if(acc//len(new_alice_key) == 1):
     print("New Alice's key: ", new_alice_key)
     print("New Bob's key: ", new_bob_key)
 else:
-    print('Key exchange has been tampered! \
-        Check for eavesdropper or try again')
+    print('Key exchange has been tampered! ---> Check for eavesdropper or try again')
     print("New Alice's key is invalid: ", new_alice_key)
     print("New Bob's key is invalid: ", new_bob_key)
 
@@ -238,8 +237,8 @@ if(acc//len(new_alice_key) == 1):
     print("New Alice's key: ", new_alice_key)
     print("New Bob's key: ", new_bob_key)
 else:
-    print('Key exchange has been tampered!', '\n',\
-        'Check for eavesdropper or try again')
+    print('Key exchange has been tampered! --->',
+          'Check for eavesdropper or try again')
     print("New Alice's key is invalid: ", new_alice_key)
     print("New Bob's key is invalid: ", new_bob_key)
 
