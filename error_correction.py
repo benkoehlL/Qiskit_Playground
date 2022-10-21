@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib.pyplot import draw, plot, show
 
 N = 1000 # number of circuits with random errors
-p = 0.3 # error probability
+p = 0.1 # error probability
 
 LaTex_folder_Error_Correction = str(os.getcwd())+'/Latex_quantum_gates/Error_Correction/'
 if not os.path.exists(LaTex_folder_Error_Correction):
