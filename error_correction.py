@@ -6,6 +6,7 @@ import numpy as np
 from matplotlib.pyplot import draw, plot, show
 
 N = 1000 # number of circuits with random errors
+p = 0.3 # error probability
 
 LaTex_folder_Error_Correction = str(os.getcwd())+'/Latex_quantum_gates/Error_Correction/'
 if not os.path.exists(LaTex_folder_Error_Correction):
@@ -15,33 +16,27 @@ else:
     os.makedirs(LaTex_folder_Error_Correction)
 
 def ERROR_X(circuit, q):
-    if(np.random.rand()<1):
+    if(np.random.rand()<p):
         circuit.x(q)
 
 def ERROR_Y(circuit, q):
-    if(np.random.rand()<1):
+    if(np.random.rand()<p):
         circuit.y(q)
 
 def ERROR_Z(circuit, q):
-    if(np.random.rand()<1):
+    if(np.random.rand()<p):
         circuit.z(q)
 
 def All_Errors(circuit, q):
-    ran = np.random.rand()
-    if(ran < 1/3):
-        ERROR_X(circuit, q[0])
-    elif(ran < 2/3):
-        ERROR_Y(circuit, q[0])
-    else:
-        ERROR_Z(circuit, q[0])
+    for qubit in q:
+        ran = np.random.rand()
+        if(ran < 1/3):
+            ERROR_X(circuit, qubit)
+        elif(ran < 2/3):
+            ERROR_Y(circuit, qubit)
+        else:
+            ERROR_Z(circuit, qubit)
     
-    ran = np.random.rand()
-    if(ran < 1/3):
-        ERROR_X(circuit, q[1])
-    elif(ran < 2/3):
-        ERROR_Y(circuit, q[1])
-    else:
-        ERROR_Z(circuit, q[1])
 
     
 def Shor_error_correction(Circuit_FUNC, qr, qr_Shor):
@@ -95,7 +90,7 @@ def Shor_error_correction(Circuit_FUNC, qr, qr_Shor):
 
         qc_postprocess.cx(qubit, qr_Shor[8*i+2])
         qc_postprocess.cx(qubit, qr_Shor[8*i+5])
-        qc_postprocess.ccx(qubit, qr_Shor[8*i+2], qr_Shor[8*i+5])
+        qc_postprocess.ccx(qr_Shor[8*i+2], qr_Shor[8*i+5], qubit)
 
         #qc_postprocess.barrier()
     
@@ -119,20 +114,21 @@ for qubit in [0, 1]:
         qc_Shor = QuantumCircuit.compose(qc, qc_Shor)        
         qc_Shor.measure(q, c)
 
-         # evaluate result
+        # evaluate result
         simulator = Aer.get_backend('qasm_simulator')
-        result = execute(qc_Shor, backend=simulator, shots=1).result()
-        counts = result.get_counts()
-        for answer in counts.keys():
-            if answer in answer_plot:
-                answer_plot[answer] += 1
+        result = execute(qc_Shor, backend=simulator, shots=100).result()
+        answer = result.get_counts()
+        for measureresult in answer.keys():
+            measureresults_input = measureresult
+            if measureresults_input in answer_plot:
+                answer_plot[measureresults_input] += answer[measureresult]
             else:
-                answer_plot[answer] = counts[answer]
+                answer_plot[measureresults_input] = answer[measureresult]
     # Plot the categorised results
     print(answer_plot)
-    plt = plot_histogram(answer_plot)
-    draw()
-    show(block=True)
+    #plt = plot_histogram(answer_plot)
+    #draw()
+    #show(block=True)
 
 LaTex_code = qc_Shor.draw(output='latex_source', initial_state=True, justify=None) # draw the circuit
 f_name = 'Shor_error_correction_XERROR.tex'
@@ -149,30 +145,34 @@ for qubit in [0, 1]:
         q_Shor = QuantumRegister(8*len(q),'q_shor')
         c = ClassicalRegister(len(q), 'c')
         qc = QuantumCircuit(q,q_Shor, c)
-        if(qubit):
-            qc.h(q) # y error is detected in Hadamard basis
+        if qubit:
+            qc.x(q)
+        qc.h(q) # y error is detected in Hadamard basis
+
         qc_Shor = Shor_error_correction(ERROR_Y, q, q_Shor) 
         qc_Shor.barrier()
         qc_Shor = QuantumCircuit.compose(qc, qc_Shor)
 
-        if(qubit):
-            qc_Shor.h(q) # y error is detected in Hadamard basis
+        qc_Shor.h(q) # y error is detected in Hadamard basis
+            
         qc_Shor.measure(q, c)
 
-         # evaluate result
+        # evaluate result
         simulator = Aer.get_backend('qasm_simulator')
-        result = execute(qc_Shor, backend=simulator, shots=1).result()
-        counts = result.get_counts()
-        for answer in counts.keys():
-            if answer in answer_plot:
-                answer_plot[answer] += 1
+        result = execute(qc_Shor, backend=simulator, shots=100).result()
+        answer = result.get_counts()
+        for measureresult in answer.keys():
+            measureresults_input = measureresult
+            if measureresults_input in answer_plot:
+                answer_plot[measureresults_input] += answer[measureresult]
             else:
-                answer_plot[answer] = counts[answer]
+                answer_plot[measureresults_input] = answer[measureresult]
+
     # Plot the categorised results
     print(answer_plot)
-    plt = plot_histogram(answer_plot)
-    draw()
-    show(block=True)
+    #plt = plot_histogram(answer_plot)
+    #draw()
+    #show(block=True)
 
 LaTex_code = qc_Shor.draw(output='latex_source', initial_state=True, justify=None) # draw the circuit
 f_name = 'Shor_error_correction_YERROR.tex'
@@ -189,29 +189,30 @@ for qubit in [0, 1]:
         q_Shor = QuantumRegister(8*len(q),'q_shor')
         c = ClassicalRegister(len(q), 'c')
         qc = QuantumCircuit(q,q_Shor, c)
-        if(qubit):
-            qc.h(q) # z error is detected in Hadamard basis
+        if qubit:
+            qc.x(q)
+        qc.h(q) # z error is detected in Hadamard basis
         qc_Shor = Shor_error_correction(ERROR_Z, q, q_Shor) 
         qc_Shor.barrier()
         qc_Shor = QuantumCircuit.compose(qc, qc_Shor)
-        if(qubit):
-            qc_Shor.h(q) # z error is detected in Hadamard basis
+        qc_Shor.h(q) # z error is detected in Hadamard basis
         qc_Shor.measure(q, c)
 
-         # evaluate result
+        # evaluate result
         simulator = Aer.get_backend('qasm_simulator')
-        result = execute(qc_Shor, backend=simulator, shots=1).result()
-        counts = result.get_counts()
-        for answer in counts.keys():
-            if answer in answer_plot:
-                answer_plot[answer] += 1
+        result = execute(qc_Shor, backend=simulator, shots=100).result()
+        answer = result.get_counts()
+        for measureresult in answer.keys():
+            measureresults_input = measureresult
+            if measureresults_input in answer_plot:
+                answer_plot[measureresults_input] += answer[measureresult]
             else:
-                answer_plot[answer] = counts[answer]
+                answer_plot[measureresults_input] = answer[measureresult]
     # Plot the categorised results
     print(answer_plot)
-    plt = plot_histogram(answer_plot)
-    draw()
-    show(block=True)
+    #plt = plot_histogram(answer_plot)
+    #draw()
+    #show(block=True)
 
 LaTex_code = qc_Shor.draw(output='latex_source', initial_state=True, justify=None) # draw the circuit
 f_name = 'Shor_error_correction_ZERROR.tex'
@@ -234,23 +235,25 @@ for qubit1 in [0, 1]:
             if(qubit2):
                 qc.x(q[1])
             qc.barrier()
+
             qc_Shor = Shor_error_correction(All_Errors, q, q_Shor)
             qc_Shor.barrier()
 
-            qc = QuantumCircuit.compose(qc, qc_Shor)
-            qc.cx(q[0],q[1])
+            qc_Shor = QuantumCircuit.compose(qc, qc_Shor)
+            qc_Shor.cx(q[0],q[1])
             for i, qubit in enumerate(reversed(q)):
-                qc.measure(qubit, c[i])
+                qc_Shor.measure(qubit, c[i])
 
             # evaluate result
             simulator = Aer.get_backend('qasm_simulator')
-            result = execute(qc_Shor, backend=simulator, shots=1).result()
-            counts = result.get_counts()
-            for answer in counts.keys():
-                if answer in answer_plot:
-                    answer_plot[answer] += 1
+            result = execute(qc_Shor, backend=simulator, shots=10).result()
+            answer = result.get_counts()
+            for measureresult in answer.keys():
+                measureresults_input = measureresult
+                if measureresults_input in answer_plot:
+                    answer_plot[measureresults_input] += answer[measureresult]
                 else:
-                    answer_plot[answer] = counts[answer]
+                    answer_plot[measureresults_input] = answer[measureresult]
         # Plot the categorised results
         print(answer_plot)
         plt = plot_histogram(answer_plot)
