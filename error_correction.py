@@ -37,8 +37,6 @@ def All_Errors(circuit, q):
         else:
             ERROR_Z(circuit, qubit)
     
-
-    
 def Shor_error_correction(Circuit_FUNC, qr, qr_Shor):
     # This function creates the Shor error correction circuit
     # for a error-prone function Circuit_FUNC and its related
