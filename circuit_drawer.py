@@ -66,10 +66,7 @@ circuit.toffoli(qr[0],qr[1],qr[2])
 circuit.measure(qr,cr)
 qasm = circuit.qasm()
 print(qasm)
-with open("QASM_file.qasm") as f:
-    qasm_string = f.read()
-    string = '"""'+str(qasm_string)+'""""'
-    #print(string)
+
 circuit2 = QuantumCircuit.from_qasm_file("qasm_file")
 figure = circuit2.draw(output='mpl')
 figure.savefig(QASM_folder+"test.svg")
@@ -77,3 +74,4 @@ figure.savefig(QASM_folder+"test.svg")
 circuit2 = QuantumCircuit.from_qasm_file("QASM_file.qasm")
 figure = circuit2.draw(output='mpl')
 figure.savefig(QASM_folder+"test.svg")
+
