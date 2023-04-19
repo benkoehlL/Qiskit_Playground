@@ -216,9 +216,11 @@ for qubit1_0 in qubit_space:
                 print('|', qubit1_1, qubit1_0, '>', '+', '|', qubit2_1, 
                         qubit2_0, '> = ' , '\t', count)
 
-                if(qubit1_1 == '1' and qubit1_0 == '1' 
-                 and qubit2_0 == '1' and qubit2_1 == '1'):
-                    LaTex_code = qc.draw(output='latex_source') # draw the circuit
+                if(qubit1_1 == '0' and qubit1_0 == '1' 
+                 and qubit2_1 == '0' and qubit2_0 == '1'):
+                    #LaTex_code = qc.draw(output='latex_source') # draw the circuit
+                    # export QASM code
+                    qc.qasm(filename="one_plus_one.qasm")
                     f_name = 'Adder_gate_for_two_two-qubit_numbers.tex'
                     with open(LaTex_folder_Adder_gates+f_name, 'w') as f:
                                 f.write(LaTex_code)
