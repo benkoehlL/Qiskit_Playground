@@ -13,8 +13,8 @@ from qiskit.tools.monitor import job_monitor
 
 def phase_oracle(circuit, register):
     circuit.cz(register[0], register[1]) # now looks for state |11>
-    #circuit.x(register[0])  # with this looks for state |x0>    
-    #circuit.x(register[1])  # with this looks for state |0x>  
+    #circuit.x(register[0])  # with this looks for state |10>
+    #circuit.x(register[1])  # with this looks for state |01> (without previous operation) or |10| (with previous operation)
     circuit.barrier()
 
 def inversion_about_average(circuit, register):

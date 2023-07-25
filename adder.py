@@ -20,7 +20,7 @@ else:
     os.makedirs(LaTex_folder_Adder_gates)
 
 qubit_space = ['0','1']
-    
+
 ## Half Adder (my version)
 print("Test Half Adder (my version",'\n')
 
@@ -217,8 +217,8 @@ for qubit1_0 in qubit_space:
                         qubit2_0, '> = ' , '\t', count)
 
                 if(qubit1_1 == '0' and qubit1_0 == '1' 
-                 and qubit2_1 == '0' and qubit2_0 == '1'):
-                    #LaTex_code = qc.draw(output='latex_source') # draw the circuit
+                 and qubit2_1 == '0' and qubit2_0 == '0'):
+                    LaTex_code = qc.draw(output='latex_source') # draw the circuit
                     # export QASM code
                     qc.qasm(filename="one_plus_one.qasm")
                     f_name = 'Adder_gate_for_two_two-qubit_numbers.tex'
@@ -311,5 +311,6 @@ print(count)
 
 LaTex_code = qc.draw(output='latex_source') # draw the circuit
 f_name = 'Adder_gate_for_'+str(string_q1)+'_and_'+str(string_q2)+'.tex'
+print(f_name)
 with open(LaTex_folder_Adder_gates+f_name, 'w') as f:
             f.write(LaTex_code)

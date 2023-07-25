@@ -1,5 +1,5 @@
 '''
-This program realises the qunatum k-means algorithm
+This program realises the quantum k-means algorithm
 '''
 
 import numpy as np
