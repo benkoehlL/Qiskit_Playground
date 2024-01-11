@@ -14,17 +14,16 @@ os.environ["QT_QPA_PLATFORM"] = "xcb"
 def ansatz_H(theta):
     qc = QuantumCircuit(2,2)
     qc.x(0)
-    qc.ry(np.pi/2,0)
-    qc.rx(5*np.pi/2,1)
+    qc.ry(theta[0],0)
+    qc.rx(theta[0]+2*np.pi,1)
     qc.cx(0,1)
-    qc.rz(theta,0)
+    qc.rz(theta[1],0)
     qc.cx(0,1)
-    qc.ry(5*np.pi/2,0)
-    qc.rx(np.pi/2,1)
+    qc.ry(theta[0]+2*np.pi,0)
+    qc.rx(theta[0],1)
     return qc
 
 def expectation_H(theta):
-    theta = theta[0]
     # See DOI: 10.1103/PhysRevX.6.031007
     # Here, we use parameters given for H2 at R=0.75A
     g0 = -0.4804
@@ -83,18 +82,17 @@ def expectation_H(theta):
     return energy
 
 nuclear_repulsion = 0.7055696146
-theta  = np.random.uniform()
-result = minimize(expectation_H,theta)
-theta  = result.x[0]
+theta  = [4*np.pi*np.random.uniform(), 4*np.pi*np.random.uniform()]
+result = minimize(expectation_H,theta, method='Nelder-Mead')
+theta  = result.x
 val    = result.fun
 
 
 print("VQE: ")
-print("  [+] theta:  {:+2.8} deg".format(theta))
+print("  [+] theta1:  {:+2.8} rad, theta2:  {:+2.8} rad".format(theta[0],theta[1]))
 print("  [+] energy: {:+2.8} Eh".format(val + nuclear_repulsion))
 
-'''Everything with matrix operations
-
+'''
 import numpy as np
 from scipy.linalg import block_diag
 from scipy.optimize import minimize
