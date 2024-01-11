@@ -5,10 +5,12 @@ This program uses some methods from quantum chemistry
 
 import numpy as np
 from matplotlib.pyplot import plot, draw, show
-import pylab
+import pylab, os
 from qiskit import *
 #from qiskit.chemistry import QiskitChemistry # does no longer exist
 from qiskit_nature import *
+
+os.environ["QT_QPA_PLATFORM"] = "xcb"
 
 # input dictionary to configure Qiskit Chemistry for the chemistry problem
 qiskit_chemistry_dict = {
@@ -83,8 +85,4 @@ for j in range(len(algorithms)):
     pylab.title('Energy difference from ExactEigensolver')
     pylab.legend(loc='upper left')
     draw()
-    show(block=True)        
-
-
-            
-            
+    show(block=True)                    
