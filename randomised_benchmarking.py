@@ -22,14 +22,14 @@ else:
 
 ## Generate RB circuits (2Q RB)
 # number of qubits
-nQ=2 
+nQ=3 
 rb_opts = {}
 # Number of Cliffords in the sequence
 rb_opts['length_vector'] = [1, 10, 20, 50, 75, 100, 125, 150, 175, 200]
 # Number of seeds (random sequences)
 rb_opts['nseeds'] = 5
 # Default pattern
-rb_opts['rb_pattern'] = [ [0, 1] ]
+rb_opts['rb_pattern'] = [ [0, 1, 2] ]
 
 rb_circs, xdata = rb.randomized_benchmarking_seq(**rb_opts)
 print(len(rb_circs))
@@ -37,18 +37,6 @@ for i in range(len(rb_circs)):
     for n, circuit in enumerate(rb_circs[i]):
         filename = str(folder_RBM+'seed_'+str(i)+'_m_'+str(rb_opts['length_vector'][n]+1)+'.qasm')
         circuit.qasm(filename=filename)
-
-## Create a new circuit without the measurement
-qregs = rb_circs[0][-1].qregs
-cregs = rb_circs[0][-1].cregs
-qc = qiskit.QuantumCircuit(*qregs, *cregs)
-for i in rb_circs[0][-1][0:-nQ]:
-    qc.data.append(i)
-
-## The Unitary is an identity (with a global phase)
-backend = qiskit.Aer.get_backend('unitary_simulator')
-basis_gates = ['u1','u2','u3','cx'] # use U,CX for now
-job = qiskit.execute(qc, backend=backend, basis_gates=basis_gates)
 
 # Run on a noisy simulator
 noise_model = NoiseModel()
