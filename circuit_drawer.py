@@ -64,14 +64,6 @@ circuit.ccx(qr[0],qr[1],qr[2])
 circuit.toffoli(qr[0],qr[1],qr[2])
 
 circuit.measure(qr,cr)
+circuit.sdg(qr[0])
 qasm = circuit.qasm()
 print(qasm)
-
-circuit2 = QuantumCircuit.from_qasm_file("qasm_file")
-figure = circuit2.draw(output='mpl')
-figure.savefig(QASM_folder+"test.svg")
-
-circuit2 = QuantumCircuit.from_qasm_file("QASM_file.qasm")
-figure = circuit2.draw(output='mpl')
-figure.savefig(QASM_folder+"test.svg")
-
