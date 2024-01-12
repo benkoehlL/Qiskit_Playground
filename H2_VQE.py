@@ -56,6 +56,8 @@ def expectation_H(theta):
         else:
             energy += -g3*counts[key]/shots
     qc = ansatz_H(theta)
+    qc.h(0)
+    qc.h(1)
     qc.s(0)
     qc.s(1)
     qc.measure(0,0)
